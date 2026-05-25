@@ -9,6 +9,26 @@ BREAK_PRESETS = [3, 5, 10, 15]
 DEFAULT_FOCUS = 25
 DEFAULT_BREAK = 5
 
+# Deep dark color palette
+BG           = "#0f0f14"
+FRAME_BG     = "#1a1a24"
+TITLE_FG     = "#c4c8da"
+SUBTLE_FG    = "#565970"
+FOCUS_RED    = "#d64550"
+BREAK_GREEN  = "#35a05d"
+START_GREEN  = "#35a05d"
+PAUSE_AMBER  = "#c78a1c"
+RESET_RED    = "#c23b44"
+PRESET_OFF   = "#252535"
+PRESET_ON    = "#2961d5"
+COUNTER_FG   = "#6e7290"
+BTN_TEXT     = "#0f0f14"
+
+FOCUS_HOVER  = "#2a9b50"
+PAUSE_HOVER  = "#b07a15"
+RESET_HOVER  = "#af313a"
+PRESET_HOVER = "#33334a"
+
 
 class PomodoroApp:
     def __init__(self):
@@ -29,7 +49,7 @@ class PomodoroApp:
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _build_ui(self):
-        self.root.configure(bg="#1e1e2e")
+        self.root.configure(bg=BG)
 
         title_font = tkfont.Font(family="Helvetica", size=18, weight="bold")
         timer_font = tkfont.Font(family="Helvetica", size=56, weight="bold")
@@ -40,22 +60,23 @@ class PomodoroApp:
         # Title
         tk.Label(
             self.root, text="🍅 番茄钟", font=title_font,
-            fg="#cdd6f4", bg="#1e1e2e"
+            fg=TITLE_FG, bg=BG
         ).pack(pady=(20, 6))
 
         # ---- Focus presets ----
         tk.Label(
             self.root, text="专注时长（分钟）", font=small_font,
-            fg="#6c7086", bg="#1e1e2e"
+            fg=SUBTLE_FG, bg=BG
         ).pack()
 
-        focus_frame = tk.Frame(self.root, bg="#1e1e2e")
+        focus_frame = tk.Frame(self.root, bg=BG)
         focus_frame.pack(pady=(4, 8))
         self.focus_btns = []
         for m in FOCUS_PRESETS:
             btn = tk.Button(
                 focus_frame, text=str(m), font=preset_font, width=4,
-                bg="#45475a", fg="#cdd6f4", activebackground="#585b70",
+                bg=PRESET_OFF, fg=TITLE_FG, activebackground=PRESET_HOVER,
+                activeforeground=TITLE_FG,
                 relief="flat", bd=0, padx=3, pady=3,
                 command=lambda v=m: self._set_focus(v)
             )
@@ -65,16 +86,17 @@ class PomodoroApp:
         # ---- Break presets ----
         tk.Label(
             self.root, text="休息时长（分钟）", font=small_font,
-            fg="#6c7086", bg="#1e1e2e"
+            fg=SUBTLE_FG, bg=BG
         ).pack()
 
-        break_frame = tk.Frame(self.root, bg="#1e1e2e")
+        break_frame = tk.Frame(self.root, bg=BG)
         break_frame.pack(pady=(4, 8))
         self.break_btns = []
         for m in BREAK_PRESETS:
             btn = tk.Button(
                 break_frame, text=str(m), font=preset_font, width=4,
-                bg="#45475a", fg="#cdd6f4", activebackground="#585b70",
+                bg=PRESET_OFF, fg=TITLE_FG, activebackground=PRESET_HOVER,
+                activeforeground=TITLE_FG,
                 relief="flat", bd=0, padx=3, pady=3,
                 command=lambda v=m: self._set_break(v)
             )
@@ -82,30 +104,30 @@ class PomodoroApp:
             self.break_btns.append((m, btn))
 
         # ---- Timer display ----
-        self.timer_frame = tk.Frame(self.root, bg="#313244", highlightthickness=0)
+        self.timer_frame = tk.Frame(self.root, bg=FRAME_BG, highlightthickness=0)
         self.timer_frame.pack(padx=40, pady=4, ipadx=30, ipady=12)
 
         self.timer_label = tk.Label(
             self.timer_frame, text="25:00", font=timer_font,
-            fg="#f38ba8", bg="#313244"
+            fg=FOCUS_RED, bg=FRAME_BG
         )
         self.timer_label.pack()
 
         self.mode_label = tk.Label(
             self.timer_frame, text="专注时间", font=label_font,
-            fg="#a6adc8", bg="#313244"
+            fg=SUBTLE_FG, bg=FRAME_BG
         )
         self.mode_label.pack(pady=(0, 8))
 
         # ---- Control buttons ----
-        ctrl_frame = tk.Frame(self.root, bg="#1e1e2e")
+        ctrl_frame = tk.Frame(self.root, bg=BG)
         ctrl_frame.pack(pady=12)
 
         ctrl_font = tkfont.Font(family="Helvetica", size=12, weight="bold")
 
         self.start_btn = tk.Button(
             ctrl_frame, text="开始", font=ctrl_font, width=6,
-            bg="#a6e3a1", fg="#1e1e2e", activebackground="#94d89d",
+            bg=START_GREEN, fg=BTN_TEXT, activebackground=FOCUS_HOVER,
             relief="flat", bd=0, padx=4, pady=6,
             command=self.start
         )
@@ -113,7 +135,7 @@ class PomodoroApp:
 
         self.pause_btn = tk.Button(
             ctrl_frame, text="暂停", font=ctrl_font, width=6,
-            bg="#f9e2af", fg="#1e1e2e", activebackground="#f0d68a",
+            bg=PAUSE_AMBER, fg=BTN_TEXT, activebackground=PAUSE_HOVER,
             relief="flat", bd=0, padx=4, pady=6,
             command=self.pause
         )
@@ -121,7 +143,7 @@ class PomodoroApp:
 
         self.reset_btn = tk.Button(
             ctrl_frame, text="重置", font=ctrl_font, width=6,
-            bg="#f38ba8", fg="#1e1e2e", activebackground="#e07a96",
+            bg=RESET_RED, fg=BTN_TEXT, activebackground=RESET_HOVER,
             relief="flat", bd=0, padx=4, pady=6,
             command=self.reset
         )
@@ -130,7 +152,7 @@ class PomodoroApp:
         # ---- Counter ----
         self.counter_label = tk.Label(
             self.root, text="已完成: 0 个番茄", font=small_font,
-            fg="#a6adc8", bg="#1e1e2e"
+            fg=COUNTER_FG, bg=BG
         )
         self.counter_label.pack(pady=(2, 16))
 
@@ -164,12 +186,10 @@ class PomodoroApp:
         self._update_display()
 
     def _update_preset_highlights(self):
-        active_bg = "#89b4fa"
-        inactive_bg = "#45475a"
         for m, btn in self.focus_btns:
-            btn.config(bg=active_bg if m == self.focus_minutes else inactive_bg)
+            btn.config(bg=PRESET_ON if m == self.focus_minutes else PRESET_OFF)
         for m, btn in self.break_btns:
-            btn.config(bg=active_bg if m == self.break_minutes else inactive_bg)
+            btn.config(bg=PRESET_ON if m == self.break_minutes else PRESET_OFF)
 
     def _fmt_time(self):
         m = self.remaining // 60
@@ -182,9 +202,9 @@ class PomodoroApp:
             text="专注时间" if self.mode == "focus" else "休息时间"
         )
         if self.mode == "focus":
-            self.timer_label.config(fg="#f38ba8")
+            self.timer_label.config(fg=FOCUS_RED)
         else:
-            self.timer_label.config(fg="#a6e3a1")
+            self.timer_label.config(fg=BREAK_GREEN)
 
     def tick(self):
         if self.remaining > 0:
